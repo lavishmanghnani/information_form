@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SecondScreen extends StatefulWidget {
-  final String? name;
-  final String? email;
-  final String? password;
 
   const SecondScreen({
     Key? key,
-    this.name,
-    this.email,
-    this.password,
   }) : super(key: key);
 
   @override
@@ -17,18 +13,40 @@ class SecondScreen extends StatefulWidget {
 }
 
 class _SecondScreenState extends State<SecondScreen> {
+
+  String? fname = "";
+  String? email = "";
+  String? password = "";
+  bool data = false;
+
+
+  @override
+  void initState(){
+    super.initState();
+    getData();
+  }
+  getData() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    fname = pref.getString('nameKey');
+    password = pref.getString('passwordKey');
+    email = pref.getString('emailKey');
+    print(pref.getString('nameKey'));
+    data = true;
+    setState((){});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Name : ' + widget.name!),
-            Text('Email : ' + widget.email!),
-            Text('Password : ' + widget.password!)
+            Text('Name : ' +fname.toString()),
+            Text('Email : ' +email.toString()),
+            Text('Password : ' +password.toString()),
           ],
         )),
       ),

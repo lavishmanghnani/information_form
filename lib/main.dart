@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'data.dart';
 
 void main() {
@@ -9,7 +9,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,6 +48,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(title),
+          actions: [
+            GestureDetector(
+              child: Icon(Icons.arrow_right_alt),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SecondScreen()),
+                );
+              },
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -170,21 +180,23 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
+
+                                    SharedPreferences pref = await SharedPreferences.getInstance();
+                                    pref.setString("nameKey", nameController.text.toString());
+                                    pref.setString("emailKey", emailController.text.toString());
+                                    pref.setString("passwordKey", passwordController.text.toString());
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text('Processing Data')),
                                     );
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SecondScreen(
-                                                name: nameController.text,
-                                                email: emailController.text,
-                                                password:
-                                                    passwordController.text,
-                                              )),
+                                          builder: (context) => SecondScreen()),
                                     );
                                   }
                                 },
@@ -193,8 +205,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     borderRadius: BorderRadius.circular(30.0),
                                   ),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20.0),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(20.0),
                                   child: Text('Submit'),
                                 )),
                           ],
